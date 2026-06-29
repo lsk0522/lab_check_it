@@ -52,23 +52,27 @@ class YoloDetector:
         # 상태 확인 (ppe_judge 결과 반영)
         status = self.current_status
         
+        # 람보르기니 테마 색상 (BGR)
         if status == "PASS":
-            bg_color = (0, 144, 74) # semantic-success
-            msg_text = "ACCESS GRANTED: PPE VERIFIED"
+            bg_color = (226, 171, 41) # Cyan Pulse (#29ABE2)
+            msg_text = "ACCESS GRANTED"
+            text_color = (0, 0, 0) # Black text
         elif status == "FAIL":
-            bg_color = (28, 41, 218) # Rosso Corsa (BGR)
-            msg_text = "ACCESS DENIED: WEAR PPE"
+            bg_color = (0, 192, 255) # Lamborghini Gold (#FFC000)
+            msg_text = "ACCESS DENIED"
+            text_color = (0, 0, 0) # Black text
         else:
-            bg_color = (48, 48, 48) # canvas-elevated
-            msg_text = "SYSTEM READY: SCANNING..."
+            bg_color = (32, 32, 32) # Charcoal (#202020)
+            msg_text = "SYSTEM READY"
+            text_color = (255, 255, 255) # White text
 
-        # 상단 블리드 배너 (Ferrari Design System - Sharp corners & flat colors)
-        cv2.rectangle(overlay, (0, 0), (width, 80), bg_color, -1)
-        # 반투명 합성
+        # 상단 블리드 배너 (Lamborghini Design System - Sharp corners & flat colors)
+        cv2.rectangle(overlay, (0, 0), (width, 100), bg_color, -1)
+        # 불투명도를 높여 강렬한 대비를 줌
         cv2.addWeighted(overlay, 0.95, cv_image, 0.05, 0, cv_image)
         
-        # 흰색 텍스트 오버레이 (Display-lg 느낌의 크기 및 굵기)
-        cv2.putText(cv_image, msg_text, (32, 52), cv2.FONT_HERSHEY_DUPLEX, 1.0, (255, 255, 255), 2, cv2.LINE_AA)
+        # 날카로운 대문자(ALL-CAPS) 오버레이 
+        cv2.putText(cv_image, msg_text, (32, 64), cv2.FONT_HERSHEY_TRIPLEX, 1.5, text_color, 2, cv2.LINE_AA)
 
         # 오버레이 이미지 토픽으로 발행 (웹 서버용)
         try:

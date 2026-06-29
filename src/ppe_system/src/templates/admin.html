@@ -4,22 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PPE Admin Dashboard</title>
-    <!-- Use FerrariSans as exacted by the Ferrari design system -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lamborghini System Fallback Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #da291c;
-            --primary-active: #b01e0a;
-            --ink: #ffffff;
-            --body: #969696;
-            --canvas: #181818;
-            --canvas-elevated: #303030;
-            --canvas-light: #ffffff;
-            --body-on-light: #181818;
-            --hairline: #303030;
-            --semantic-success: #03904a;
-            --semantic-warning: #f13a2c;
-            --semantic-info: #4c98b9;
+            --primary: #FFC000; /* Lamborghini Gold */
+            --primary-active: #917300;
+            --ink: #FFFFFF;
+            --body: #7D7D7D; /* Ash */
+            --canvas: #000000; /* Absolute Black */
+            --canvas-elevated: #202020; /* Charcoal */
+            --canvas-light: #F8F8F8;
+            --body-on-light: #202020;
+            --hairline: #202020;
+            --semantic-success: #29ABE2; /* Cyan Pulse */
+            --semantic-warning: #FFC000;
             --spacing-xxxs: 4px;
             --spacing-xs: 16px;
             --spacing-md: 32px;
@@ -28,41 +27,44 @@
         }
 
         /* 
-           DESIGN.md Typography Guidelines
-           FerrariSans substitute: Inter at weight 500 with negative letter-spacing 
+           Lamborghini Typography Guidelines
+           ALL-CAPS dominant, tight line-heights, Open Sans fallback
         */
         body {
             background-color: var(--canvas);
             color: var(--body);
-            font-family: 'FerrariSans', 'Inter', -apple-system, system-ui, sans-serif;
-            font-weight: 500;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 400;
             margin: 0;
             padding: 0;
             -webkit-font-smoothing: antialiased;
+            text-transform: uppercase;
         }
 
         /* Top Nav on Dark */
         header {
             background-color: var(--canvas);
             color: var(--ink);
-            height: 64px;
+            height: 80px;
             display: flex;
             align-items: center;
             padding: 0 var(--spacing-lg);
             border-bottom: 1px solid var(--hairline);
-            text-transform: uppercase;
-            letter-spacing: 0.65px;
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
+            letter-spacing: 1.4px;
         }
 
         .header-logo {
-            color: var(--primary);
+            color: var(--ink);
             font-weight: 700;
-            font-size: 18px;
+            font-size: 24px;
             margin-right: auto;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            letter-spacing: 0px;
+        }
+        
+        .header-logo span {
+            color: var(--primary);
         }
 
         /* Hero Band Cinema */
@@ -91,12 +93,11 @@
 
         .hero h1 {
             color: var(--ink);
-            font-size: 80px;
-            font-weight: 500;
-            line-height: 1.05;
-            letter-spacing: -1.6px;
+            font-size: 80px; /* Display 2 */
+            font-weight: 400;
+            line-height: 1.13;
+            letter-spacing: normal;
             margin: 0 0 var(--spacing-md) 0;
-            text-transform: uppercase;
         }
 
         /* Status Display */
@@ -104,26 +105,27 @@
             display: inline-block;
             background-color: var(--canvas-elevated);
             color: var(--ink);
-            font-size: 36px; /* display-lg */
-            font-weight: 500;
-            letter-spacing: -0.36px;
-            text-transform: uppercase;
+            font-size: 54px; /* Section Title */
+            font-weight: 400;
+            line-height: 1.19;
             padding: 24px 64px;
-            border-radius: 0px; /* Sharp corners */
-            border: 1px solid var(--hairline);
+            border-radius: 0px; /* Uncompromising rectangles */
+            border: 2px solid var(--hairline);
             transition: all 0.3s ease;
         }
 
         .status-badge.PASS {
             background-color: var(--semantic-success);
             border-color: var(--semantic-success);
-            color: var(--ink);
+            color: var(--canvas); /* Black text on Cyan */
+            font-weight: 700;
         }
 
         .status-badge.FAIL {
             background-color: var(--primary);
             border-color: var(--primary);
-            color: var(--ink);
+            color: var(--canvas); /* Black text on Gold */
+            font-weight: 700;
         }
 
         /* Grid Layout */
@@ -146,19 +148,16 @@
         }
 
         .card h2 {
-            font-size: 18px; /* title-md */
-            font-weight: 700;
+            font-size: 24px; /* Card Title */
+            font-weight: 400;
             margin: 0 0 16px 0;
-            color: var(--body);
-            letter-spacing: 0;
-            text-transform: none;
+            color: var(--ink);
         }
 
         .number-display {
-            font-size: 80px; /* number-display */
-            font-weight: 700;
-            line-height: 1.0;
-            letter-spacing: -1.6px;
+            font-size: 80px;
+            font-weight: 400;
+            line-height: 1.13;
             color: var(--ink);
             margin: 0;
         }
@@ -196,7 +195,7 @@
 <body>
 
     <header>
-        <div class="header-logo">PPE SYSTEM ADMIN</div>
+        <div class="header-logo">LAMBORGHINI <span>PPE SYSTEM</span></div>
         <div>LIVE MONITORING</div>
     </header>
 
