@@ -64,31 +64,34 @@ def api_status():
         "logs": logs
     })
 
-def start_localtunnel():
-    # 기존 프로세스 정리
-    os.system("pkill -f 'localtunnel' > /dev/null 2>&1")
+def start_pinggy_tunnel():
+    # 기존 SSH 터널 프로세스 정리
+    os.system("pkill -f 'pinggy' > /dev/null 2>&1")
     time.sleep(1)
     
-    # npx localtunnel을 실행하여 외부 접속 URL 획득
+    # Pinggy SSH 터널(회원가입/설치 필요없는 외부망 접속) 실행
     try:
-        proc = subprocess.Popen(['npx', 'localtunnel', '--port', '5000'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        proc = subprocess.Popen(
+            ['ssh', '-o', 'StrictHostKeyChecking=no', '-p', '443', '-R0:localhost:5000', 'a.pinggy.io'],
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
+        )
         for line in proc.stdout:
-            if "your url is:" in line:
-                url = line.strip().split("your url is:")[1].strip()
+            if "https://" in line and "pinggy" in line:
+                url = line.strip()
                 # 쉘 스크립트에서 읽을 수 있도록 파일로 저장
                 with open("/tmp/ppe_public_url.txt", "w") as f:
                     f.write(url)
-                rospy.loginfo(f"Localtunnel URL obtained: {url}")
+                rospy.loginfo(f"Pinggy URL obtained: {url}")
                 break
     except Exception as e:
-        rospy.logerr(f"Localtunnel 실행 실패 (npx가 설치되어 있는지 확인하세요): {e}")
+        rospy.logerr(f"Pinggy SSH 터널 실행 실패: {e}")
 
 if __name__ == '__main__':
     # ROS 통신용 스레드 시작
     threading.Thread(target=start_ros_node, daemon=True).start()
     
-    # Localtunnel 터널링 스레드 시작
-    threading.Thread(target=start_localtunnel, daemon=True).start()
+    # Pinggy 터널링 스레드 시작 (외부망 스마트폰 접속용)
+    threading.Thread(target=start_pinggy_tunnel, daemon=True).start()
     
     # 터미널 출력(로그)을 최소화하기 위해 Flask 자체 로거 끄기
     log = logging.getLogger('werkzeug')

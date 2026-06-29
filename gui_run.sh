@@ -5,7 +5,7 @@
 # ========================================================
 
 # 이 스크립트가 종료될 때 백그라운드 프로세스(ROS)를 모두 깔끔하게 종료합니다.
-trap "echo -e '\n[시스템 종료] 모든 백그라운드 프로세스를 종료합니다...'; rosnode kill -a > /dev/null 2>&1; pkill -f 'rosmaster'; pkill -f 'localtunnel'; exit 0" SIGINT SIGTERM
+trap "echo -e '\n[시스템 종료] 모든 백그라운드 프로세스를 종료합니다...'; rosnode kill -a > /dev/null 2>&1; pkill -f 'rosmaster'; pkill -f 'pinggy'; pkill -f 'ssh'; exit 0" SIGINT SIGTERM
 
 echo "========================================================"
 echo "      🚀 PPE Detection System 로딩 중... "
@@ -13,7 +13,8 @@ echo "========================================================"
 
 # 기존 프로세스 찌꺼기 정리
 pkill -f 'rosmaster' > /dev/null 2>&1
-pkill -f 'localtunnel' > /dev/null 2>&1
+pkill -f 'pinggy' > /dev/null 2>&1
+pkill -f 'ssh' > /dev/null 2>&1
 rm -f /tmp/ppe_public_url.txt
 
 # 워크스페이스 소싱
@@ -25,9 +26,9 @@ roslaunch ppe_system ppe_full.launch > /dev/null 2>&1 &
 
 echo "▶ 딥러닝(YOLOv5) 추론 엔진 로딩 중..."
 sleep 3
-echo "▶ 웹 대시보드 외부망 접속 주소(localtunnel) 발급 대기 중..."
+echo "▶ 웹 대시보드 외부망 접속 주소 발급 대기 중 (Pinggy)..."
 
-# localtunnel URL이 생성될 때까지 대기
+# Pinggy URL이 생성될 때까지 대기
 timeout=20
 count=0
 public_url=""
@@ -43,13 +44,23 @@ while [ $count -lt $timeout ]; do
     count=$((count+1))
 done
 
+WSL_IP=$(hostname -I | awk '{print $1}')
 echo ""
 echo "========================================================"
+echo "🌍 네트워크 환경 분석 완료!"
+echo "   WSL 환경 내부 IP 주소: $WSL_IP"
+echo ""
+
 if [ -z "$public_url" ]; then
-    echo "⚠️ 외부 접속 주소를 가져오지 못했습니다. 로컬(http://localhost:5000)에서 접속해 주세요."
-    echo "   (※ npx 명령어가 설치되어 있는지 확인이 필요합니다.)"
+    echo "⚠️ 외부 접속 주소를 가져오지 못했습니다."
+    echo "✅ 윈도우 브라우저에서 아래 주소로 대시보드에 접속하세요:"
+    echo "🌐 -> http://$WSL_IP:5000"
+    echo "   (※ http://localhost:5000 이 안될 경우 위 주소 사용)"
 else
-    echo "✅ 웹 대시보드 스마트폰/외부 접속 주소:"
+    echo "✅ 윈도우 브라우저(로컬) 접속 주소:"
+    echo "🌐 -> http://$WSL_IP:5000"
+    echo ""
+    echo "✅ 스마트폰/외부(localtunnel) 접속 주소:"
     echo "🌐 -> $public_url"
 fi
 echo ""
