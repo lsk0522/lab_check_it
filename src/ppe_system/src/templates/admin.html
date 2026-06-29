@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PPE Admin Dashboard</title>
+    <!-- Use Inter font as recommended by the Ferrari design system -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #da291c;
+            --primary-active: #b01e0a;
+            --ink: #ffffff;
+            --body: #969696;
+            --canvas: #181818;
+            --canvas-elevated: #303030;
+            --canvas-light: #ffffff;
+            --body-on-light: #181818;
+            --hairline: #303030;
+            --semantic-success: #03904a;
+            --semantic-warning: #f13a2c;
+            --semantic-info: #4c98b9;
+            --spacing-xxxs: 4px;
+            --spacing-xs: 16px;
+            --spacing-md: 32px;
+            --spacing-lg: 48px;
+            --spacing-xxl: 96px;
+        }
+
+        body {
+            background-color: var(--canvas);
+            color: var(--body);
+            font-family: 'Inter', -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Top Nav on Dark */
+        header {
+            background-color: var(--canvas);
+            color: var(--ink);
+            height: 64px;
+            display: flex;
+            align-items: center;
+            padding: 0 var(--spacing-lg);
+            border-bottom: 1px solid var(--hairline);
+            text-transform: uppercase;
+            letter-spacing: 0.65px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .header-logo {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 18px;
+            margin-right: auto;
+            letter-spacing: 1px;
+        }
+
+        /* Hero Band Cinema */
+        .hero {
+            background-color: var(--canvas);
+            padding: var(--spacing-xxl) var(--spacing-lg);
+            text-align: center;
+        }
+
+        .hero h1 {
+            color: var(--ink);
+            font-size: 80px;
+            font-weight: 500;
+            line-height: 1.05;
+            letter-spacing: -1.6px;
+            margin: 0 0 var(--spacing-md) 0;
+        }
+
+        /* Status Display */
+        .status-badge {
+            display: inline-block;
+            background-color: var(--canvas-elevated);
+            color: var(--ink);
+            font-size: 26px;
+            font-weight: 500;
+            letter-spacing: 0.195px;
+            padding: 24px 64px;
+            border-radius: 0px; /* Sharp corners */
+            border: 1px solid var(--hairline);
+            transition: all 0.3s ease;
+        }
+
+        .status-badge.PASS {
+            background-color: var(--semantic-success);
+            border-color: var(--semantic-success);
+            color: var(--ink);
+        }
+
+        .status-badge.FAIL {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: var(--ink);
+        }
+
+        /* Grid Layout */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-lg) var(--spacing-xxl);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-xs);
+        }
+
+        /* Feature Card (Driver Card style) */
+        .card {
+            background-color: var(--canvas-elevated);
+            color: var(--ink);
+            padding: 24px;
+            border-radius: 0px;
+            border: 1px solid var(--hairline);
+        }
+
+        .card h2 {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0 0 16px 0;
+            color: var(--body);
+        }
+
+        .number-display {
+            font-size: 80px;
+            font-weight: 700;
+            line-height: 1.0;
+            letter-spacing: -1.6px;
+            color: var(--ink);
+            margin: 0;
+        }
+
+        .number-display.accent {
+            color: var(--primary);
+        }
+
+        .card-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .card-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--hairline);
+            font-size: 14px;
+            color: var(--ink);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .card-list li:last-child {
+            border-bottom: none;
+        }
+
+        .timestamp {
+            color: var(--body);
+            font-size: 12px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-logo">PPE SYSTEM ADMIN</div>
+        <div>LIVE MONITORING</div>
+    </header>
+
+    <div class="hero">
+        <h1>STATUS: <span id="main-status" class="status-badge WAITING">WAITING</span></h1>
+        <p style="color: var(--body); font-size: 18px; margin-top: 16px;">
+            Currently detected items: <span id="detected-items" style="color: var(--ink); font-weight: 700;">-</span>
+        </p>
+    </div>
+
+    <div class="container">
+        <!-- Stats Card 1 -->
+        <div class="card">
+            <h2>TOTAL SCANS TODAY</h2>
+            <div class="number-display" id="total-scans">0</div>
+        </div>
+        
+        <!-- Stats Card 2 -->
+        <div class="card">
+            <h2>SAFETY VIOLATIONS</h2>
+            <div class="number-display accent" id="total-violations">0</div>
+        </div>
+
+        <!-- Log Card -->
+        <div class="card">
+            <h2>RECENT DETECTIONS</h2>
+            <ul class="card-list" id="log-list">
+                <li><span style="color: var(--body);">No recent activity</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Fetch data via AJAX polling
+        async function fetchStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+
+                // Update Status Badge
+                const badge = document.getElementById('main-status');
+                badge.innerText = data.status;
+                badge.className = 'status-badge ' + data.status;
+
+                // Update Items
+                document.getElementById('detected-items').innerText = 
+                    data.items.length > 0 ? data.items.join(', ') : 'None';
+                
+                // Update Stats
+                document.getElementById('total-scans').innerText = data.stats.total;
+                document.getElementById('total-violations').innerText = data.stats.violations;
+
+                // Update Logs
+                const logList = document.getElementById('log-list');
+                if (data.logs.length > 0) {
+                    logList.innerHTML = '';
+                    data.logs.forEach(log => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<span>${log.status}</span> <span class="timestamp">${log.time}</span>`;
+                        logList.appendChild(li);
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching status:", error);
+            }
+        }
+
+        // Poll every 1 second
+        setInterval(fetchStatus, 1000);
+        fetchStatus();
+    </script>
+</body>
+</html>
