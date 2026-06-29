@@ -25,7 +25,7 @@ from roboflow import Roboflow
 
 # 주의: 아래 api_key 문자열 안에 본인의 API Key를 입력해야 합니다!
 rf = Roboflow(api_key="본인의_API_키를_여기에_입력하세요") 
-project = rf.workspace("t5tmj").project("personal-protective-equipment-combined-model-3yadt")
+project = rf.workspace("keremberke").project("protective-equipment-detection")
 
 # YOLOv5 PyTorch 형식으로 데이터셋 다운로드
 dataset = project.version(1).download("yolov5")
