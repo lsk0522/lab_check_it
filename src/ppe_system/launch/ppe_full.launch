@@ -16,6 +16,9 @@
     <!-- 상태 판단 로드 -->
     <node pkg="ppe_system" type="ppe_judge.py" name="ppe_judge_node" output="log" />
 
-    <!-- 웹 서버 노드 (Flask + localtunnel) -->
+    <!-- 웹 관리자 대시보드 서버 (Port 5000) -->
     <node pkg="ppe_system" type="web_server.py" name="web_server_node" output="log" />
+
+    <!-- 로컬 GUI Kiosk 서버 (Port 8787) -->
+    <node pkg="ppe_system" type="gui_server.py" name="gui_server_node" output="log" />
 </launch>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PPE Admin Dashboard</title>
-    <!-- Use Inter font as recommended by the Ferrari design system -->
+    <!-- Use FerrariSans as exacted by the Ferrari design system -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -30,7 +30,7 @@
         body {
             background-color: var(--canvas);
             color: var(--body);
-            font-family: 'Inter', -apple-system, sans-serif;
+            font-family: 'FerrariSans', 'Inter', -apple-system, system-ui, sans-serif;
             margin: 0;
             padding: 0;
             -webkit-font-smoothing: antialiased;
@@ -64,6 +64,23 @@
             background-color: var(--canvas);
             padding: var(--spacing-xxl) var(--spacing-lg);
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .video-container {
+            width: 100%;
+            max-width: 640px;
+            margin-bottom: var(--spacing-md);
+            border: 1px solid var(--hairline);
+            border-radius: 0px;
+            background-color: #000;
+        }
+
+        .video-container img {
+            width: 100%;
+            display: block;
         }
 
         .hero h1 {
@@ -174,6 +191,9 @@
     </header>
 
     <div class="hero">
+        <div class="video-container">
+            <img src="/video_feed" alt="Live Camera Feed">
+        </div>
         <h1>STATUS: <span id="main-status" class="status-badge WAITING">WAITING</span></h1>
         <p style="color: var(--body); font-size: 18px; margin-top: 16px;">
             Currently detected items: <span id="detected-items" style="color: var(--ink); font-weight: 700;">-</span>

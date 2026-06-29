@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 import rospy
 from std_msgs.msg import String
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify, Response
 from datetime import datetime
-from ppe_system.msg import PPEResult
+from sensor_msgs.msg import Image
+from cv_bridge import CvBridge
+import cv2
 import threading
 import subprocess
 import time
@@ -19,6 +21,20 @@ last_logged_status = "WAITING"
 detected_items = []
 stats = {"total": 0, "violations": 0}
 logs = []
+
+# 영상 스트리밍용
+bridge = CvBridge()
+latest_frame = None
+
+def image_callback(msg):
+    global latest_frame
+    try:
+        cv_image = bridge.imgmsg_to_cv2(msg, "bgr8")
+        ret, buffer = cv2.imencode('.jpg', cv_image)
+        if ret:
+            latest_frame = buffer.tobytes()
+    except Exception as e:
+        pass
 
 def ros_status_callback(msg):
     global current_status, stats, logs, last_logged_status
@@ -49,7 +65,17 @@ def start_ros_node():
     rospy.init_node('web_server_node', anonymous=True, disable_signals=True)
     rospy.Subscriber("/ppe_status", String, ros_status_callback)
     rospy.Subscriber("/ppe_detection/result", PPEResult, ros_result_callback)
+    rospy.Subscriber("/ppe_detection/image_overlay", Image, image_callback)
     rospy.spin()
+
+def generate_frames():
+    global latest_frame
+    while True:
+        if latest_frame is not None:
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + latest_frame + b'\r\n')
+        else:
+            time.sleep(0.1)
 
 @app.route('/')
 def index():
@@ -63,6 +89,10 @@ def api_status():
         "stats": stats,
         "logs": logs
     })
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 def start_pinggy_tunnel():
     # 기존 SSH 터널 프로세스 정리

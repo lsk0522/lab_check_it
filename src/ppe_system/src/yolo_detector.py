@@ -5,6 +5,7 @@ from cv_bridge import CvBridge, CvBridgeError
 import cv2
 # from ultralytics import YOLO  # 향후 YOLO 연동 시 주석 해제
 from ppe_system.msg import PPEResult
+from std_msgs.msg import String
 
 class YoloDetector:
     def __init__(self):
@@ -16,10 +17,18 @@ class YoloDetector:
         
         # 카메라 영상 토픽 구독
         self.image_sub = rospy.Subscriber("/picam/image_raw", Image, self.image_callback)
-        # 추론 결과 발행 토픽
+        # 추론 결과 및 오버레이 이미지 발행 토픽
         self.result_pub = rospy.Publisher("/ppe_detection/result", PPEResult, queue_size=10)
+        self.overlay_pub = rospy.Publisher("/ppe_detection/image_overlay", Image, queue_size=10)
+        
+        # 상태 구독 (ppe_judge 로부터)
+        self.current_status = "WAITING"
+        self.status_sub = rospy.Subscriber("/ppe_status", String, self.status_callback)
         
         rospy.loginfo("YOLO Detector Node Initialized. Waiting for image...")
+
+    def status_callback(self, msg):
+        self.current_status = msg.data
 
     def image_callback(self, data):
         try:
@@ -40,9 +49,8 @@ class YoloDetector:
         height, width = cv_image.shape[:2]
         overlay = cv_image.copy()
         
-        # 상태 확인 (현재는 더미 상태 - 실제로는 ppe_judge.py의 판단 결과를 구독해야 함)
-        # 로직 고도화 전까지 임시로 "WAITING" 표시 (추후 /ppe_status 구독 연동)
-        status = "WAITING"
+        # 상태 확인 (ppe_judge 결과 반영)
+        status = self.current_status
         
         if status == "PASS":
             bg_color = (0, 144, 74) # semantic-success
@@ -62,9 +70,12 @@ class YoloDetector:
         # 흰색 텍스트 오버레이 (Display-lg 느낌의 크기 및 굵기)
         cv2.putText(cv_image, msg_text, (32, 52), cv2.FONT_HERSHEY_DUPLEX, 1.0, (255, 255, 255), 2, cv2.LINE_AA)
 
-        # 다이렉트 GUI Kiosk 출력
-        cv2.imshow("PPE Detection System - User Kiosk", cv_image)
-        cv2.waitKey(1)
+        # 오버레이 이미지 토픽으로 발행 (웹 서버용)
+        try:
+            overlay_msg = self.bridge.cv2_to_imgmsg(cv_image, "bgr8")
+            self.overlay_pub.publish(overlay_msg)
+        except CvBridgeError as e:
+            rospy.logerr(f"Overlay Publish Error: {e}")
 
 if __name__ == '__main__':
     try:
@@ -72,5 +83,3 @@ if __name__ == '__main__':
         rospy.spin()
     except rospy.ROSInterruptException:
         pass
-    finally:
-        cv2.destroyAllWindows()

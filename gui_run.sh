@@ -52,20 +52,18 @@ echo "   WSL 환경 내부 IP 주소: $WSL_IP"
 echo ""
 
 if [ -z "$public_url" ]; then
-    echo "⚠️ 외부 접속 주소를 가져오지 못했습니다."
-    echo "✅ 윈도우 브라우저에서 아래 주소로 대시보드에 접속하세요:"
-    echo "🌐 -> http://$WSL_IP:5000"
-    echo "   (※ http://localhost:5000 이 안될 경우 위 주소 사용)"
+    echo "⚠️ Pinggy 외부 접속 주소를 가져오지 못했습니다."
 else
-    echo "✅ 윈도우 브라우저(로컬) 접속 주소:"
-    echo "🌐 -> http://$WSL_IP:5000"
+    echo "🌐 [관리자 WEB] 스마트폰 외부 접속 주소:"
+    echo "   -> $public_url"
     echo ""
-    echo "✅ 스마트폰/외부(localtunnel) 접속 주소:"
-    echo "🌐 -> $public_url"
 fi
+
+echo "🖥️ [현장 Kiosk GUI] 사용자 모니터용 주소 (포트 8787):"
+echo "   -> http://$WSL_IP:8787  (또는 http://localhost:8787)"
 echo ""
-echo "🎨 다이렉트 GUI 화면(OpenCV 창)이 팝업되었습니다."
-echo "   (창이 안 보이면 터미널 뒤에 숨어있는지 확인해 주세요!)"
+echo "📊 [관리자 WEB] 로컬 대시보드 주소 (포트 5000):"
+echo "   -> http://$WSL_IP:5000  (또는 http://localhost:5000)"
 echo ""
 echo "🛑 시스템을 종료하려면 이 창에서 [Ctrl + C] 를 누르세요."
 echo "========================================================"
