@@ -41,9 +41,9 @@ class YoloDetector:
         
         # self.result_pub.publish(msg)
         
-        # 디버깅용 화면 출력 (실제 적용 시 rqt_image_view 사용 권장)
-        cv2.imshow("YOLO Detection Stream", cv_image)
-        cv2.waitKey(3)
+        # 다이렉트 GUI 화면 출력 (사용자 요청에 따라 필수 팝업)
+        cv2.imshow("PPE Detection System - Live View", cv_image)
+        cv2.waitKey(1)
 
 if __name__ == '__main__':
     try:

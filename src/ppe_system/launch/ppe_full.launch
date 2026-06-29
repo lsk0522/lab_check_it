@@ -1,0 +1,21 @@
+<launch>
+    <!-- 카메라 노드 (Picam) -->
+    <!-- 참고: 사용하시는 환경의 Picam 드라이버에 따라 노드명이나 토픽명이 다를 수 있습니다. -->
+    <node pkg="raspicam_node" type="raspicam_node" name="picam" output="log">
+        <!-- 해상도를 640x480으로 낮춰서 YOLO 추론 부하를 줄임 -->
+        <param name="width" value="640"/>
+        <param name="height" value="480"/>
+        <param name="framerate" value="30"/>
+        <!-- yolo_detector가 구독하는 토픽 이름으로 리맵핑 -->
+        <remap from="/raspicam_node/image" to="/picam/image_raw"/>
+    </node>
+
+    <!-- YOLO 추론 노드 (다이렉트 GUI 창 띄움) -->
+    <node pkg="ppe_system" type="yolo_detector.py" name="yolo_detector_node" output="log" />
+
+    <!-- 상태 판단 로드 -->
+    <node pkg="ppe_system" type="ppe_judge.py" name="ppe_judge_node" output="log" />
+
+    <!-- 웹 서버 노드 (Flask + localtunnel) -->
+    <node pkg="ppe_system" type="web_server.py" name="web_server_node" output="log" />
+</launch>
