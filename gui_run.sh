@@ -44,7 +44,8 @@ while [ $count -lt $timeout ]; do
     count=$((count+1))
 done
 
-WSL_IP=$(hostname -I | awk '{print $1}')
+# 169.254(링크 로컬) 제외하고 정상적인 내부 IP 추출
+WSL_IP=$(hostname -I | awk '{for(i=1;i<=NF;i++) if($i !~ /^169\.254/) {print $i; exit}}')
 echo ""
 echo "========================================================"
 echo "🌍 네트워크 환경 분석 완료!"
