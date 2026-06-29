@@ -135,3 +135,28 @@ YOLOv5 전이학습의 전 과정(데이터 수집 → 라벨링 → 학습 → 
 
 ### 마. HW·SW 통합 및 문제 해결 역량의 발전
 Arduino GPIO와 ROS 노드를 Serial 통신으로 연동하는 임베디드-소프트웨어 통합 개발을 경험하고, 실제 실습실이라는 현실 문제를 정의하여 기술로 해결하는 과정을 통해 공학적 사고력과 문제 해결 역량을 기를 수 있습니다.
+
+---
+
+## 6. 실행 가이드 (How to Run)
+
+### 1) 자동 환경 구축 (`setup.sh`)
+```bash
+git clone https://github.com/lsk0522/lab_check_it.git ROS_part2_ws
+cd ROS_part2_ws
+chmod +x setup.sh
+./setup.sh
+```
+모든 ROS 필수 패키지, 파이썬 라이브러리 설치 및 워크스페이스 빌드를 한 번에 수행합니다.
+
+### 2) YOLOv5 딥러닝 학습 (Google Colab)
+[docs/Colab_Training_Guide.md](docs/Colab_Training_Guide.md) 문서를 참고하여, 클라우드 환경에서 모델을 학습하고 `models/ppe_yolov5s.pt` 가중치 파일을 준비합니다.
+
+### 3) 통합 시스템 런처 (`run.sh`)
+```bash
+chmod +x run.sh
+./run.sh
+```
+- **백그라운드 실행**: 터미널 지저분한 로그 출력 없이 모든 ROS 노드가 조용히 구동됩니다.
+- **다이렉트 GUI**: 백그라운드 구동 중에도 모니터 화면에 OpenCV 영상 창이 자동으로 팝업되어 감지 화면을 보여줍니다.
+- **외부 웹 대시보드**: 스마트폰(LTE) 등 외부 인터넷에서 실시간 현황을 볼 수 있도록 생성된 `localtunnel` 주소가 터미널에 표시됩니다.
